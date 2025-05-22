@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.meta/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Production
+production_dependencies/
+
+# System files
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs
+
+# Editor and IDE files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Temporary files
+tmp/
+temp/
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Typescript
+*.tsbuildinfo
+
+# Optional: if using a package manager lock file
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
