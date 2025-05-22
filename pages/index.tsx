@@ -1,3 +1,15 @@
+/**
+ * 날씨 예보 애플리케이션 메인 페이지
+ * 
+ * 이 애플리케이션은 사용자가 입력한 도시명으로 해당 도시의 당일 시간대별 날씨 예보를 조회합니다.
+ * 프로세스:
+ * 1. 도시명 → 위경도 변환 (Nominatim API)
+ * 2. 위경도 → 격자 좌표 변환 (기상청 API)
+ * 3. 격자 좌표 → 날씨 예보 데이터 조회 (기상청 API)
+ * 
+ * 코딩 테스트 지원자는 utils/api.ts 파일의 API 호출 함수와
+ * pages/api/ 폴더의 API 라우트 함수들을 구현해야 합니다.
+ */
 import { useState } from 'react';
 import Head from 'next/head';
 import { 
@@ -24,20 +36,26 @@ import { getCoordsFromCity, getGridFromCoords, getWeatherForecast } from '../uti
 import { WeatherData } from '../types/weather';
 
 export default function Home() {
-  const [city, setCity] = useState('');
-  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searchedCity, setSearchedCity] = useState<string>('');
+  // 상태 관리
+  const [city, setCity] = useState(''); // 입력된 도시명
+  const [weatherData, setWeatherData] = useState<WeatherData[]>([]); // 날씨 데이터
+  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [error, setError] = useState<string | null>(null); // 에러 메시지
+  const [searchedCity, setSearchedCity] = useState<string>(''); // 검색된 도시명
   
   // API 호출 단계 상태
-  const [activeStep, setActiveStep] = useState(-1);
-  const [coords, setCoords] = useState<{lat: string, lon: string} | null>(null);
-  const [gridCoords, setGridCoords] = useState<{nx: number, ny: number} | null>(null);
-  const [stepErrors, setStepErrors] = useState<string[]>(['', '', '']);
+  const [activeStep, setActiveStep] = useState(-1); // 현재 진행 중인 API 호출 단계
+  const [coords, setCoords] = useState<{lat: string, lon: string} | null>(null); // 위경도 정보
+  const [gridCoords, setGridCoords] = useState<{nx: number, ny: number} | null>(null); // 격자 좌표
+  const [stepErrors, setStepErrors] = useState<string[]>(['', '', '']); // 각 단계별 오류 메시지
 
+  // API 호출 단계 라벨
   const apiSteps = ['도시명 → 위경도', '위경도 → 격자 좌표', '격자 좌표 → 날씨 데이터'];
 
+  /**
+   * 검색 버튼 클릭 시 호출되는 함수
+   * 입력된 도시명을 기반으로 단계적으로 API를 호출하여 날씨 데이터를 조회합니다.
+   */
   const handleSearch = async () => {
     if (!city.trim()) {
       setError('도시명을 입력해주세요.');
@@ -126,6 +144,9 @@ export default function Home() {
     }
   };
 
+  /**
+   * 엔터 키 입력 시 검색 실행
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -145,6 +166,7 @@ export default function Home() {
           날씨 예보 API 테스트
         </Typography>
 
+        {/* 검색 폼 */}
         <Box component={Paper} elevation={3} className="p-4 mb-4">
           <Box className="flex flex-col sm:flex-row gap-2 mb-2">
             <TextField
@@ -173,6 +195,7 @@ export default function Home() {
           </Typography>
         </Box>
 
+        {/* 오류 메시지 */}
         {error && (
           <Alert severity="error" className="mb-4">
             {error}
@@ -218,6 +241,7 @@ export default function Home() {
           </Box>
         )}
 
+        {/* 로딩 표시 */}
         {loading && (
           <Box className="flex justify-center my-4">
             <CircularProgress />

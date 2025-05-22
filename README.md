@@ -195,3 +195,91 @@ Nominatim → 위도, 경도 <br>
 ---
 
 문의사항은 인터뷰어에게 자유롭게 질문하세요!
+
+# 날씨 예보 API 연동 코딩 테스트
+
+이 코딩 테스트는 지원자의 API 연동 구현 능력을 평가하기 위한 것입니다. 주어진 템플릿 프로젝트를 기반으로 필요한 API 호출 로직을 구현해야 합니다.
+
+## 프로젝트 개요
+
+이 애플리케이션은 사용자가 도시명을 입력하면 해당 도시의 당일 시간대별 날씨 예보를 보여주는 웹 애플리케이션입니다.
+
+API 호출 프로세스:
+1. 도시명 → 위경도 변환 (Nominatim API)
+2. 위경도 → 격자 좌표 변환 (기상청 API)
+3. 격자 좌표 → 날씨 예보 데이터 (기상청 API)
+
+## 과제 설명
+
+이 프로젝트에서 UI와 기본 구조는 이미 구현되어 있습니다. 지원자는 **API 연동 부분만 구현**하면 됩니다.
+
+### 구현해야 할 파일
+
+1. `utils/api.ts`: API 호출 함수들
+   - `getCoordsFromCity`: 도시명 → 위경도 변환
+   - `getGridFromCoords`: 위경도 → 격자 좌표 변환
+   - `getWeatherForecast`: 격자 좌표 → 날씨 예보 데이터
+
+2. `pages/api/geocode.ts`: 도시명 → 위경도 변환 API 라우트
+3. `pages/api/grid.ts`: 위경도 → 격자 좌표 변환 API 라우트
+4. `pages/api/weather.ts`: 격자 좌표 → 날씨 예보 데이터 API 라우트
+
+모든 파일에는 TODO 주석과 상세한 API 정보가 포함되어 있습니다.
+
+## 시작하기
+
+1. 패키지 설치:
+   ```
+   npm install
+   ```
+
+2. 개발 서버 실행:
+   ```
+   npm run dev
+   ```
+
+3. 브라우저에서 http://localhost:3000 접속
+
+## API 정보
+
+### 1. 도시명 → 위경도 (Nominatim API)
+- Endpoint: `https://nominatim.openstreetmap.org/search`
+- 파라미터:
+  - `q`: 도시명
+  - `format`: json
+
+### 2. 위경도 → 격자 좌표 (기상청 API)
+- Endpoint: `https://apihub.kma.go.kr/api/typ01/cgi-bin/url/nph-dfs_xy_lonlat`
+- 파라미터:
+  - `lon`: 경도
+  - `lat`: 위도
+  - `authKey`: 인증키 (2rvTFXzSTpi70xV80l6YMg)
+- 응답 형식: 텍스트 (마지막 라인에서 X, Y 좌표 추출 필요)
+
+### 3. 격자 좌표 → 날씨 예보 (기상청 API)
+- Endpoint: `https://apihub.kma.go.kr/api/typ02/openApi/VilageFcstInfoService_2.0/getVilageFcst`
+- 파라미터:
+  - `pageNo`: 페이지 번호 (기본값: 1)
+  - `numOfRows`: 한 페이지 결과 수 (기본값: 1000)
+  - `dataType`: 응답 데이터 타입 (기본값: JSON)
+  - `base_date`: 발표일자 (YYYYMMDD)
+  - `base_time`: 발표시각 (HHMM)
+  - `nx`: 예보지점 X 좌표
+  - `ny`: 예보지점 Y 좌표
+  - `authKey`: 인증키 (2rvTFXzSTpi70xV80l6YMg)
+
+## 주의사항
+
+- CORS 이슈를 피하기 위해 브라우저에서 직접 외부 API를 호출하지 말고, Next.js API 라우트를 통해 서버 사이드에서 호출해야 합니다.
+- 각 함수와 API 라우트에는 적절한 오류 처리를 구현해야 합니다.
+- 각 단계의 중간 결과(위경도, 격자 좌표)가 UI에 표시되므로 정확히 구현해야 합니다.
+- 날씨 데이터 가공은 이미 `processWeatherData` 함수로 구현되어 있습니다.
+
+## 평가 기준
+
+1. API 호출 구현의 정확성
+2. 오류 처리의 적절성
+3. 코드 가독성 및 구조화
+4. 비동기 처리 방식
+
+제한 시간 내에 최대한 많은 기능을 구현해주세요. 모든 기능을 완성하지 못하더라도 구현한 부분까지 제출해주시면 됩니다.

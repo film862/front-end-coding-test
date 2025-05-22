@@ -1,34 +1,28 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+/**
+ * 도시명 → 위경도 변환을 위한 API 라우트
+ * 
+ * 이 API 라우트는 Nominatim API를 호출하여 도시명을 위경도 좌표로 변환합니다.
+ * CORS 이슈를 해결하기 위해 서버 사이드에서 API를 호출합니다.
+ * 
+ * @param req NextApiRequest - city 쿼리 파라미터 필요
+ * @param res NextApiResponse - 위경도 정보 또는 에러 응답
+ * 
+ * API 정보:
+ * - Endpoint: https://nominatim.openstreetmap.org/search
+ * - Method: GET
+ * - 파라미터:
+ *   - q: 도시명
+ *   - format: json
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // GET 요청만 허용
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: '허용되지 않는 메서드입니다.' });
-  }
-
-  try {
-    const { city } = req.query;
-
-    // 필수 파라미터 확인
-    if (!city) {
-      return res.status(400).json({ error: '도시명이 누락되었습니다.' });
-    }
-
-    // Nominatim API 호출
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city as string)}&format=json`
-    );
-    
-    if (!response.ok) {
-      throw new Error('도시 검색에 실패했습니다.');
-    }
-    
-    const data = await response.json();
-    
-    // API 응답 반환
-    res.status(200).json(data);
-  } catch (error) {
-    console.error('API 에러:', error);
-    res.status(500).json({ error: '위치 검색 중 오류가 발생했습니다.' });
-  }
+  // TODO: 지원자가 구현해야 하는 부분
+  // 1. GET 요청 확인
+  // 2. city 쿼리 파라미터 확인
+  // 3. Nominatim API 호출
+  // 4. 응답 데이터 반환
+  // 5. 오류 처리
+  
+  res.status(501).json({ error: '도시명 → 위경도 변환 API가 구현되지 않았습니다.' });
 } 
